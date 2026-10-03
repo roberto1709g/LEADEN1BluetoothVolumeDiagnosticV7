@@ -39,6 +39,11 @@ import java.util.Locale;
 
 public class MainActivity extends Activity {
     private static final int REQ_BT = 6001;
+    private static final String ACTION_VOLUME_CHANGED = "android.media.VOLUME_CHANGED_ACTION";
+    private static final String EXTRA_VOLUME_STREAM_TYPE = "android.media.EXTRA_VOLUME_STREAM_TYPE";
+    private static final String EXTRA_VOLUME_STREAM_VALUE = "android.media.EXTRA_VOLUME_STREAM_VALUE";
+    private static final String EXTRA_PREV_VOLUME_STREAM_VALUE = "android.media.EXTRA_PREV_VOLUME_STREAM_VALUE";
+
     private AudioManager audioManager;
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothA2dp a2dp;
@@ -68,10 +73,10 @@ public class MainActivity extends Activity {
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (AudioManager.ACTION_VOLUME_CHANGED_ACTION.equals(action)) {
-                int stream = intent.getIntExtra(AudioManager.EXTRA_VOLUME_STREAM_TYPE, -1);
-                int vol = intent.getIntExtra(AudioManager.EXTRA_VOLUME_STREAM_VALUE, -1);
-                int prev = intent.getIntExtra(AudioManager.EXTRA_PREV_VOLUME_STREAM_VALUE, -1);
+            if (ACTION_VOLUME_CHANGED.equals(action)) {
+                int stream = intent.getIntExtra(EXTRA_VOLUME_STREAM_TYPE, -1);
+                int vol = intent.getIntExtra(EXTRA_VOLUME_STREAM_VALUE, -1);
+                int prev = intent.getIntExtra(EXTRA_PREV_VOLUME_STREAM_VALUE, -1);
                 log("VOLUME_BROADCAST stream=" + stream + " " + prev + " -> " + vol + " | MUSIC=" + audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
                 lastVolume = vol;
                 updateVolume();
@@ -141,7 +146,7 @@ public class MainActivity extends Activity {
 
     private void registerReceivers() {
         IntentFilter f = new IntentFilter();
-        f.addAction(AudioManager.ACTION_VOLUME_CHANGED_ACTION);
+        f.addAction(ACTION_VOLUME_CHANGED);
         f.addAction(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED);
         f.addAction(BluetoothA2dp.ACTION_PLAYING_STATE_CHANGED);
         f.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
